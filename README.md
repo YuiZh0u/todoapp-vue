@@ -1,4 +1,4 @@
-# yui-todoapp
+# todoapp
 
 ## Project setup
 ```
