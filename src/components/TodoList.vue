@@ -7,20 +7,9 @@
     @keyup.enter="addTodo"
     >
 
-    <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
+    <todoitem v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index" class="todo-item" @Eliminado="removeTodo" @Editado="EditadoPadre" :checkAll="!anyRemaining">
 
-    <div class="todo-item-left">
-      <input type="checkbox" v-model="todo.completed">
-
-      <div v-if="!todo.editing" @dblclick="editTodo(todo)" class="todo-item-label" :class="{completed : todo.completed}"> {{todo.title}} </div>
-
-      <input v-else type="text" v-model="todo.title" class="todo-item-edit" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)" v-focus>
-    </div>
-
-    <!-- Se debe cambiar por un boton de eliminar -->
-     <div class="remove-item" @click="removeTodo(index)"> &times; </div>
-
-    </div>
+    </todoitem>
 
     <div class="extra-container">
       <div>
@@ -52,6 +41,7 @@
 </template>
 
 <script>
+import todoitem from './TodoItem'
 
 export default {
   name: 'todo-list',
@@ -102,12 +92,8 @@ export default {
     }
   },
 
-  directives: {
-    focus: {
-      inserted: function (el) {
-        el.focus()
-      }
-    }
+  components: {
+    todoitem,
   },
 
   methods: {
@@ -127,27 +113,30 @@ export default {
     removeTodo(index){
       this.todos.splice(index, 1);
     },
-    editTodo(todo){
-      this.beforeEditCache = todo.title
-      todo.editing = true
-    },
-    doneEdit(todo){
-      if (todo.title.trim() == '') {
-        todo.title = this.beforeEditCache
-      }
-      todo.editing = false
-    },
-    cancelEdit(todo){
-      todo.title = this.beforeEditCache
-      todo.editing = false
-    },
+    // editTodo(todo){
+    //   this.beforeEditCache = todo.title
+    //   todo.editing = true
+    // },
+    // doneEdit(todo){
+    //   if (todo.title.trim() == '') {
+    //     todo.title = this.beforeEditCache
+    //   }
+    //   todo.editing = false
+    // },
+    // cancelEdit(todo){
+    //   todo.title = this.beforeEditCache
+    //   todo.editing = false
+    // },
     checkAll(){
       this.todos.forEach((todo) => todo.completed = event.target.checked)
     },
     clearCompleted(){
       this.todos = this.todos.filter(item => !item.completed)
+    },
+    EditadoPadre(data){
+      this.todos.splice(data.index, 1 , data.todo)
     }
-  }
+  },
 
 }
 </script>
@@ -215,14 +204,14 @@ export default {
     background-color: white;
     appearance: none;
     &:hover {
-      background: lightgreen;
+      background: lightseagreen;
     }
     &:focus {
       outline: none;
     }
   }
   .active {
-    background: lightgreen;
+    background: lightseagreen;
   }
   // CSS Transitions
   .fade-enter-active, .fade-leave-active {
